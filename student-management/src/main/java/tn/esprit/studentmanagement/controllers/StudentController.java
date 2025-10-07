@@ -8,21 +8,40 @@ import tn.esprit.studentmanagement.services.IStudentService;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @RestController
 @RequestMapping("/students")
 @CrossOrigin(origins = "http://localhost:4200")
 @AllArgsConstructor
 public class StudentController {
-IStudentService studentService;
+    private static final Logger logger = LogManager.getLogger(StudentController.class);
+    IStudentService studentService;
 
     @GetMapping("/getAllStudents")
-    public List<Student> getAllStudents() { return studentService.getAllStudents(); }
+    public List<Student> getAllStudents() {
+        logger.debug("Fetching all students");
+        List<Student> students = studentService.getAllStudents();
+        logger.info("Number of students fetched: {}", students.size());
+        return students;
+    }
 
     @GetMapping("/getStudent/{id}")
-    public Student getStudent(@PathVariable Long id) { return studentService.getStudentById(id); }
+    public Student getStudent(@PathVariable Long id) {
+        logger.debug("Fetching student with id: {}", id);
+        Student student = studentService.getStudentById(id);
+        if (student == null) {
+            logger.error("Student not found with id: {}", id);
+        }
+        return student;
+    }
 
     @PostMapping("/createStudent")
-    public Student createStudent(@RequestBody Student student) { return studentService.saveStudent(student); }
+    public Student createStudent(@RequestBody Student student) {
+        logger.info("Creating student: {}", student);
+        return studentService.saveStudent(student);
+    }
 
     @PutMapping("/updateStudent")
     public Student updateStudent(@RequestBody Student student) {

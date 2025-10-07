@@ -7,29 +7,44 @@ import tn.esprit.studentmanagement.repositories.DepartmentRepository;
 
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 @Service
 
+
+
 public class DepartmentService implements IDepartmentService {
+    private static final Logger logger = LogManager.getLogger(DepartmentService.class);
+
     @Autowired
-    DepartmentRepository departmentRepository;
+    private DepartmentRepository departmentRepository;
+
+
+
 
     @Override
     public List<Department> getAllDepartments() {
+        logger.debug("Fetching all departments from repository");
         return departmentRepository.findAll();
     }
 
     @Override
     public Department getDepartmentById(Long idDepartment) {
-        return departmentRepository.findById(idDepartment).get();
+        logger.debug("Fetching department by id: {}", idDepartment);
+        return departmentRepository.findById(idDepartment).orElse(null);
     }
+
 
     @Override
     public Department saveDepartment(Department department) {
+        logger.info("Saving department: {}", department);
         return departmentRepository.save(department);
     }
 
     @Override
     public void deleteDepartment(Long idDepartment) {
-departmentRepository.deleteById(idDepartment);
+        logger.warn("Deleting department with id: {}", idDepartment);
+        departmentRepository.deleteById(idDepartment);
     }
 }
